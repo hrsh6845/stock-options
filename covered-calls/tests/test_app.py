@@ -1,0 +1,34 @@
+# Import pytest for writing and running tests
+import pytest
+
+# Import the Flask app instance from the main app file
+from app import app
+
+@pytest.fixture
+def client():
+    """A test client for the app."""
+    # Create a test client using the Flask application configured for testing
+    with app.test_client() as client:
+        yield client # This is where the testing happens!
+
+def test_home(client):
+    """Test the home route."""
+    response = client.get('/')
+    assert response.status_code == 200
+    assert response.json == {"message": "Hello, Flask!"}
+
+def test_multiply(client):
+    """Test the multiply route with valid input."""
+    response = client.get('/multiply/3/4')
+    assert response.status_code == 200
+    assert response.json == {"result": 12}
+
+def test_multiply_invalid_input(client):
+    """Test the multiply route with invalid input."""
+    response = client.get('/multiply/three/four')
+    assert response.status_code == 404
+
+def test_non_existent_route(client):
+    """Test for a non-existent route."""
+    response = client.get('/non-existent')
+    assert response.status_code == 404
