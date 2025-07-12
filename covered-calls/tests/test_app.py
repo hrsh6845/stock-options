@@ -32,3 +32,10 @@ def test_non_existent_route(client):
     """Test for a non-existent route."""
     response = client.get('/non-existent')
     assert response.status_code == 404
+
+def test_get_all_securities(client):
+    """Test the get_all_securities route."""
+    response = client.get('/get-all-securities')
+    assert response.status_code == 200
+    assert response.json == {"message": "All securities retrieved successfully."}
+
