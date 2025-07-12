@@ -11,7 +11,9 @@ app = Flask(__name__)
 query_type = 'TIME_SERIES_INTRADAY'
 symbol = 'IBM'
 interval = '20min'
-api_key = os.getenv('API_KEY')
+api_key_alpha_vantage = os.getenv('API_KEY_ALPHA_VANTAGE')
+api_key_polygon_ai = os.getenv('API_KEY_POLYGON_AI')
+
 
 @app.route('/')
 def home():
@@ -28,7 +30,7 @@ if __name__ == '__main__':
 @app.route('/get-all-securities')
 def get_all_securities():
 
-    url = f'https://www.alphavantage.co/query?function={query_type}&symbol={symbol}&interval={interval}&apikey={api_key}'
+    url = f'https://www.alphavantage.co/query?function={query_type}&symbol={symbol}&interval={interval}&apikey={api_key_alpha_vantage}'
     r = requests.get(url)
     data = r.json()
     if 'Error Message' in data:
