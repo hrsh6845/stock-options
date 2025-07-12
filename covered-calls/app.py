@@ -1,8 +1,12 @@
 import requests
 import os
+import polygon
+import time
+import sqlite3
 
 from flask import Flask, jsonify
 from dotenv import load_dotenv
+from polygon import RESTCLIENT
 
 # load environment variables from .env file
 load_dotenv()
@@ -13,23 +17,26 @@ symbol = 'IBM'
 interval = '20min'
 api_key_alpha_vantage = os.getenv('API_KEY_ALPHA_VANTAGE')
 api_key_polygon_ai = os.getenv('API_KEY_POLYGON_AI')
+polygon_client = RESTCLIENT(api_key_polygon_ai)
 
 
 @app.route('/')
 def home():
     return jsonify(message="Hello, Flask!")
 
+
 @app.route('/multiply/<int:x>/<int:y>')
 def multiply(x, y):
     result = x * y
     return jsonify(result=result)
 
+
 if __name__ == '__main__':
     app.run(debug=True)
 
+
 @app.route('/get-all-securities')
 def get_all_securities():
-
     url = f'https://www.alphavantage.co/query?function={query_type}&symbol={symbol}&interval={interval}&apikey={api_key_alpha_vantage}'
     r = requests.get(url)
     data = r.json()
@@ -37,3 +44,25 @@ def get_all_securities():
         return jsonify(message=data['Error Message'])
 
     return jsonify(message=data)
+
+
+@app.route('/get-all-securities-polygon')
+def get_all_securities_polygon():
+    tickers = []
+    for t in polygon_client.list_tickers(
+            market="stocks",
+            active="true",
+            order="asc",
+            limit="100",
+            sort="ticker",
+    ):
+        tickers.append(t)
+        append_to_db(tickers)
+
+
+def append_to_db(data_list):
+    conn = sqlite3.connect('securities.db')
+    c = conn.cursor()
+    c.executemany("INSERT INTO tickers (symbol, exchange) VALUES (?, ?)", data_list)
+    conn.commit()
+    conn.close()
