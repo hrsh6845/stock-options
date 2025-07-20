@@ -2,7 +2,8 @@
 import pytest
 
 # Import the Flask app instance from the main app file
-from app import app
+from app import app, db_connection_test
+
 
 @pytest.fixture
 def client():
@@ -39,3 +40,6 @@ def test_get_all_securities(client):
     assert response.status_code == 200
     assert response.json == {"message": "All securities retrieved successfully."}
 
+def test_db_connection(client):
+    """Test the database connection."""
+    response = db_connection_test()
