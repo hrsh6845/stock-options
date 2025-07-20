@@ -54,4 +54,6 @@ def initial_security_append(data_list):
 @app.route('/monday-suggestions')
 def monday_suggestions():
     # pull options data for all the securities
+
+
     return
