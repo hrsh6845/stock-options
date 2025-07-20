@@ -2,7 +2,7 @@
 import pytest
 
 # Import the Flask app instance from the main app file
-from app import app, db_connection_test
+from app import app
 
 
 @pytest.fixture
@@ -36,7 +36,7 @@ def test_non_existent_route(client):
 
 def test_get_all_securities(client):
     """Test the get_all_securities route."""
-    response = client.get('/get-all-securities')
+    response = client.get('/get-all-securities-polygon')
     assert response.status_code == 200
     assert response.json == {"message": "All securities retrieved successfully."}
 

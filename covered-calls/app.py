@@ -33,7 +33,7 @@ if __name__ == '__main__':
 
 @app.route('/get-all-securities')
 def get_all_securities():
-    url = f'https://www.alphavantage.co/query?function={query_type}&symbol={symbol}&interval={interval}&apikey={api_key_alpha_vantage}'
+    url = f'https://www.alphavantage.com/query?function={query_type}&symbol={symbol}&interval={interval}&apikey={api_key_alpha_vantage}'
     r = requests.get(url)
     data = r.json()
     if 'Error Message' in data:
