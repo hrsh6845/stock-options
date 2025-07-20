@@ -10,7 +10,7 @@ from polygon import StocksClient
 load_dotenv()
 app = Flask(__name__)
 
-# pull from environment variables.
+# pull keys from environment variables.
 api_key_alpha_vantage = os.getenv('API_KEY_ALPHA_VANTAGE')
 api_key_polygon_ai = os.getenv('API_KEY_POLYGON_AI')
 local_db_path = os.getenv('DB_LOCATION')
@@ -26,7 +26,7 @@ if __name__ == '__main__':
     app.run(debug=True)
 
 @app.route('/get-all-securities')
-def get_all_securities_polygon():
+def get_all_securities():
     tickers = []
     count = 0
     url = f'https://api.polygon.io/v3/reference/tickers?market=stocks&active=true&order=asc&limit=100&sort=ticker&apiKey={api_key_polygon_ai}'
@@ -41,12 +41,17 @@ def get_all_securities_polygon():
         if count >= 5:
             break
 
-    append_to_db(tickers)
+    initial_security_append(tickers)
     return jsonify(message=data)
 
-def append_to_db(data_list):
+def initial_security_append(data_list):
     conn = sqlite3.connect(local_db_path)
     c = conn.cursor()
     c.executemany("INSERT OR IGNORE INTO tickers (symbol, exchange) VALUES (?, ?)", data_list)
     conn.commit()
     conn.close()
+
+@app.route('/monday-suggestions')
+def monday_suggestions():
+    # pull options data for all the securities
+    return
