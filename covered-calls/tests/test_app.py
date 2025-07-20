@@ -4,7 +4,6 @@ import pytest
 # Import the Flask app instance from the main app file
 from app import app
 
-
 @pytest.fixture
 def client():
     """A test client for the app."""
@@ -18,17 +17,6 @@ def test_home(client):
     assert response.status_code == 200
     assert response.json == {"message": "Hello, Flask!"}
 
-def test_multiply(client):
-    """Test the multiply route with valid input."""
-    response = client.get('/multiply/3/4')
-    assert response.status_code == 200
-    assert response.json == {"result": 12}
-
-def test_multiply_invalid_input(client):
-    """Test the multiply route with invalid input."""
-    response = client.get('/multiply/three/four')
-    assert response.status_code == 404
-
 def test_non_existent_route(client):
     """Test for a non-existent route."""
     response = client.get('/non-existent')
@@ -39,7 +27,3 @@ def test_get_all_securities(client):
     response = client.get('/get-all-securities-polygon')
     assert response.status_code == 200
     assert response.json == {"message": "All securities retrieved successfully."}
-
-def test_db_connection(client):
-    """Test the database connection."""
-    response = db_connection_test()

@@ -15,18 +15,12 @@ symbol = 'IBM'
 interval = '20min'
 api_key_alpha_vantage = os.getenv('API_KEY_ALPHA_VANTAGE')
 api_key_polygon_ai = os.getenv('API_KEY_POLYGON_AI')
-polygon_client = StocksClient(api_key_polygon_ai)
+polygon_client = StocksClient(api_key=api_key_polygon_ai)
 local_db_path = os.getenv('DB_LOCATION')
 
 @app.route('/')
 def home():
     return jsonify(message="Hello, Flask!")
-
-
-@app.route('/multiply/<int:x>/<int:y>')
-def multiply(x, y):
-    result = x * y
-    return jsonify(result=result)
 
 if __name__ == '__main__':
     app.run(debug=True)
@@ -45,15 +39,30 @@ def get_all_securities():
 @app.route('/get-all-securities-polygon')
 def get_all_securities_polygon():
     tickers = []
-    for t in polygon_client.list_tickers(
-            market="stocks",
-            active="true",
-            order="asc",
-            limit="100",
-            sort="ticker",
-    ):
-        tickers.append(t)
-        append_to_db(tickers)
+    count = 0
+    url = f'https://api.polygon.io/v3/reference/tickers?market=stocks&active=true&order=asc&limit=100&sort=ticker&apiKey={api_key_polygon_ai}'
+
+    while True:
+        r = requests.get(url)
+        data = r.json()
+        count += 1
+        url = data['next_url']
+        for t in data['results']:
+            tickers.append((t['ticker'], t['primary_exchange']))
+        if count >= 5:
+            break
+
+    append_to_db(tickers)
+    return jsonify(message=data)
+    #for t in polygon_client.list_tickers(
+     #       market="stocks",
+      #      active="true",
+       #     order="asc",
+        #    limit="100",
+         #   sort="ticker",
+    #):
+     #   tickers.append(t)
+      #  append_to_db(tickers)
 
 def append_to_db(data_list):
     conn = sqlite3.connect(local_db_path)
