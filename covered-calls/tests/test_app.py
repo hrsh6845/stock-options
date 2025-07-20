@@ -24,6 +24,6 @@ def test_non_existent_route(client):
 
 def test_get_all_securities(client):
     """Test the get_all_securities route."""
-    response = client.get('/get-all-securities-polygon')
+    response = client.get('/get-all-securities')
     assert response.status_code == 200
     assert response.json == {"message": "All securities retrieved successfully."}
