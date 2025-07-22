@@ -1,0 +1,8 @@
+certifi==2025.7.9
+charset-normalizer==3.4.2
+idna==3.10
+polygon-api-client==1.15.1
+python-dotenv==1.1.1
+requests==2.32.4
+urllib3==2.5.0
+websockets==14.2
